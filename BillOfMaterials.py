@@ -68,6 +68,9 @@ def get_bill_of_materials(V, C, rounding_precision):
       angle_in_degrees = 180 * angle / np.pi
       hubs[h]['connected_vertices'][c]['tangential_angle'] = angle_in_degrees
 
+  #
+  # display the tangential plane angles we just calculated
+  #
   print 'Angles at hub between outbound cords and tangential plane:'
   print
   print '\thub\tconnecting hub\tangle (degrees)'
