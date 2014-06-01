@@ -49,25 +49,33 @@ def get_bill_of_materials(V, C, rounding_precision):
   hubs = {}
   for c in C:
     if not hubs.has_key(c[0]):  hubs[c[0]] = {'connected_vertices': {}, 'vertex' : None}
-    hubs[c[0]]['connected_vertices'][c[1]] = V[c[1]-1]
+    hubs[c[0]]['connected_vertices'][c[1]] = {'vertex' : V[c[1]-1]}
     hubs[c[0]]['vertex'] = V[c[0]-1]
     if not hubs.has_key(c[1]):  hubs[c[1]] = {'connected_vertices' : {}, 'vertex' : None}
-    hubs[c[1]]['connected_vertices'][c[0]] = V[c[0]-1]
+    hubs[c[1]]['connected_vertices'][c[0]] = {'vertex' : V[c[0]-1]}
     hubs[c[1]]['vertex'] = V[c[1]-1]
+
 
   #
   # compute angles at hub between outbound chords and tangential plane
   #
+  for h in hubs.keys():
+    vertex = hubs[h]['vertex']
+    for c in hubs[h]['connected_vertices']:
+      A = vertex
+      B = vertex - hubs[h]['connected_vertices'][c]['vertex']
+      angle = (np.pi/2) - np.arccos(np.dot(A, B) / (np.linalg.norm(A) * np.linalg.norm(B)))
+      angle_in_degrees = 180 * angle / np.pi
+      hubs[h]['connected_vertices'][c]['tangential_angle'] = angle_in_degrees
+
   print 'Angles at hub between outbound cords and tangential plane:'
   print
   print '\thub\tconnecting hub\tangle (degrees)'
   for h in hubs.keys():
     print '\t' + str(h)
-    vertex = hubs[h]['vertex']
+    number_of_connected_vertices = len(hubs[h]['connected_vertices'])
     for c in hubs[h]['connected_vertices']:
-      A = vertex
-      B = vertex - hubs[h]['connected_vertices'][c]
-      angle = (np.pi/2) - np.arccos(np.dot(A, B) / (np.linalg.norm(A) * np.linalg.norm(B)))
-      angle_in_degrees = 180 * angle / np.pi
-
-      print '\t\t' + str(c) + '\t' + str(angle_in_degrees)
+      if number_of_connected_vertices == 1:
+        print '\t\t' + str(c) + '\t' + 'base hub of truncated sphere, no angle to report'
+      else:
+        print '\t\t' + str(c) + '\t' + str(hubs[h]['connected_vertices'][c]['tangential_angle'])
