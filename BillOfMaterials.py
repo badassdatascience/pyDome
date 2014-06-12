@@ -65,7 +65,7 @@ def get_bill_of_materials(V, C, rounding_precision):
       A = vertex
       B = vertex - hubs[h]['connected_vertices'][c]['vertex']
       angle = (np.pi/2) - np.arccos(np.dot(A, B) / (np.linalg.norm(A) * np.linalg.norm(B)))
-      angle_in_degrees = 180 * angle / np.pi
+      angle_in_degrees = 180. * angle / np.pi
       hubs[h]['connected_vertices'][c]['tangential_angle'] = angle_in_degrees
 
   #
@@ -82,3 +82,55 @@ def get_bill_of_materials(V, C, rounding_precision):
         print '\t\t' + str(c) + '\t' + 'base hub of truncated sphere, no angle to report'
       else:
         print '\t\t' + str(c) + '\t' + str(hubs[h]['connected_vertices'][c]['tangential_angle'])
+
+
+
+
+  #
+  # spoke angles 
+  #
+  for hub in hubs.keys():
+    normal_vector = hubs[hub]['vertex'] / np.linalg.norm(hubs[hub]['vertex'])
+    point_on_plane = hubs[hub]['vertex']
+    line_origin = np.array([0., 0., 0.])
+    for spoke in hubs[hub]['connected_vertices']:
+      line = hubs[hub]['connected_vertices'][spoke]['vertex'] / np.linalg.norm(hubs[hub]['connected_vertices'][spoke]['vertex'])
+      d = np.dot((point_on_plane - line_origin), normal_vector) / np.dot(line, normal_vector)   # http://en.wikipedia.org/wiki/Line%E2%80%93plane_intersection
+      hubs[hub]['connected_vertices'][spoke]['point_of_tangential_plane_intersection'] = d * line
+
+  #
+  # display spoke angles
+  #
+  print
+  print 'Spoke angles:'
+  print
+  print '\thub\tconnecting hub\tangle (degrees)'
+  for hub in hubs.keys():
+    print '\t' + str(hub)
+    spoke_list = sorted(hubs[hub]['connected_vertices'])
+    vertex = hubs[hub]['vertex']
+    point = hubs[hub]['connected_vertices'][spoke_list[0]]['point_of_tangential_plane_intersection']
+    reference_vector = point - vertex
+    
+    print '\t\t' + str(spoke_list[0]) + '\t0.0'
+    
+    for spoke in spoke_list[1:]:
+      point = hubs[hub]['connected_vertices'][spoke]['point_of_tangential_plane_intersection']
+      comparison_vector = point - vertex
+
+      normalized_dot_product = np.dot(reference_vector, comparison_vector) / (np.linalg.norm(reference_vector) * np.linalg.norm(comparison_vector))
+
+      if normalized_dot_product < -1.0:
+        normalized_dot_product = -1.0
+
+      angle = np.arccos(normalized_dot_product)
+      angle_in_degrees = 180. * angle / np.pi
+
+      # http://www.opengl.org/discussion_boards/showthread.php/159385-Deriving-angles-from-0-to-360-from-Dot-Product
+      C = np.cross(reference_vector, comparison_vector)
+      direction = np.dot(C, vertex)
+      if direction < 0.:  angle_in_degrees = -1 * angle_in_degrees
+
+      print '\t\t' + str(spoke) + '\t' +  str(angle_in_degrees)
+
+
