@@ -134,3 +134,38 @@ def get_bill_of_materials(V, C, rounding_precision):
       print '\t\t' + str(spoke) + '\t' +  str(angle_in_degrees)
 
 
+
+  ##
+  ## display unprojected spoke angles
+  ##
+  #print
+  #print 'Unprojected spoke angles:'
+  #print
+  #print '\thub\tconnecting hub\tangle (degrees)'
+  #for hub in hubs.keys():
+  #  print '\t' + str(hub)
+  #  spoke_list = sorted(hubs[hub]['connected_vertices'])
+  #  vertex = hubs[hub]['vertex']
+  #  point = hubs[hub]['connected_vertices'][spoke_list[0]]['vertex']
+  #  reference_vector = point - vertex
+  #  
+  #  print '\t\t' + str(spoke_list[0]) + '\t0.0'
+  #  
+  #  for spoke in spoke_list[1:]:
+  #    point = hubs[hub]['connected_vertices'][spoke]['vertex']
+  #    comparison_vector = point - vertex
+
+  #    normalized_dot_product = np.dot(reference_vector, comparison_vector) / (np.linalg.norm(reference_vector) * np.linalg.norm(comparison_vector))
+
+  #    if normalized_dot_product < -1.0:
+  #      normalized_dot_product = -1.0
+
+  #    angle = np.arccos(normalized_dot_product)
+  #    angle_in_degrees = 180. * angle / np.pi
+
+  #    # http://www.opengl.org/discussion_boards/showthread.php/159385-Deriving-angles-from-0-to-360-from-Dot-Product
+  #    C = np.cross(reference_vector, comparison_vector)
+  #    direction = np.dot(C, vertex)
+  #    if direction < 0.:  angle_in_degrees = -1 * angle_in_degrees
+
+  #    print '\t\t' + str(spoke) + '\t' +  str(angle_in_degrees)
