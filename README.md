@@ -1,7 +1,7 @@
 pyDome
 ======
 
-A geodesic dome calculator written in Python
+A geodesic dome calculator written in Python.
 
 pyDome calculates vertices and chords of Class One geodesic domes of arbitrary size. Domes created by pyDome can be truncated to facilitate structure design. The program produces DXF for easy import into CAD programs, and VRML output for easy display.
 
